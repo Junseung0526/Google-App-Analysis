@@ -4,7 +4,7 @@ import numpy as np
 import seaborn as sns
 import koreanize_matplotlib 
 import matplotlib.pyplot as plt
-koreanize_matplotlib.koreanize()  # 또는 그냥 import만 해도 됨
+koreanize_matplotlib.koreanize()  # 한글 폰트 적용
 
 # --- 페이지 기본 설정 ---
 st.set_page_config(page_title="Google Play Store 분석", layout="wide")
@@ -117,6 +117,36 @@ ax4.set_xlabel("앱 용량 (MB)")
 ax4.set_ylabel("설치 수 (로그 변환)")
 ax4.legend()
 st.pyplot(fig4)
+
+# --- 5. 상위 15개 카테고리 평균 용량과 평균 설치 수 산점도 ---
+st.subheader("5️⃣ 상위 15개 카테고리 평균 앱 용량과 설치 수")
+st.markdown("카테고리별 평균 앱 용량(MB)과 평균 설치 수를 비교한 산점도입니다.")
+
+# 카테고리별 평균 용량과 평균 설치수 집계 (Installs 원본 스케일)
+df_top = df.dropna(subset=['Category', 'Size_MB', 'Installs'])
+category_grouped = df_top.groupby('Category').agg({
+    'Size_MB': 'mean',
+    'Installs': 'mean'
+}).reset_index()
+
+top15_categories = category_grouped.sort_values(by='Installs', ascending=False).head(15)
+
+fig5, ax5 = plt.subplots(figsize=(12, 6))
+sns.scatterplot(
+    data=top15_categories,
+    x='Size_MB',
+    y='Installs',
+    hue='Category',
+    s=150,
+    palette='tab10',
+    ax=ax5
+)
+ax5.set_title("상위 15개 카테고리 평균 앱 용량과 설치 수")
+ax5.set_xlabel("평균 앱 용량 (MB)")
+ax5.set_ylabel("평균 설치 수")
+ax5.grid(True)
+ax5.legend(title='카테고리', bbox_to_anchor=(1.05, 1), loc='upper left')
+st.pyplot(fig5)
 
 st.markdown("---")
 st.caption("데이터 출처: Google Play Store Dataset on Kaggle")
