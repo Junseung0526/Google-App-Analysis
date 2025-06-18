@@ -103,20 +103,26 @@ ax3.set_title("카테고리별 평균 앱 용량 (상위 15개)")
 st.pyplot(fig3)
 
 # --- 4. 앱 용량 vs 설치 수 관계 ---
-st.subheader("4️⃣ 앱 용량과 설치 수의 관계")
-st.markdown("앱 용량이 설치 수에 어떤 영향을 주는지 확인합니다.")
+st.subheader("4️⃣ 설치 수 구간별 평균 앱 용량")
+st.markdown("앱의 설치 수에 따라 평균 용량(MB)이 어떻게 달라지는지를 확인해봅니다.")
 
-df_corr = df.dropna(subset=['Size_MB', 'Log_Installs'])
-corr_val = df_corr[['Size_MB', 'Log_Installs']].corr().iloc[0, 1]
+# 구간 설정
+bins = [0, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, np.inf]
+labels = ['<1천', '1천-1만', '1만-10만', '10만-100만', '100만-1천만', '1천만-1억', '1억 이상']
+df_clean = df.dropna(subset=['Size_MB', 'Installs'])  # 필요한 열 필터링
+df_clean['Install_Bin'] = pd.cut(df_clean['Installs'], bins=bins, labels=labels)
 
-fig4, ax4 = plt.subplots(figsize=(10, 6))
-sns.scatterplot(data=df_corr, x='Size_MB', y='Log_Installs', alpha=0.3, ax=ax4, label='앱 분포')
-sns.regplot(data=df_corr, x='Size_MB', y='Log_Installs', scatter=False, color='red', ax=ax4, label='회귀선')
-ax4.set_title(f"앱 용량 vs 설치 수 (상관계수: {corr_val:.2f})")
-ax4.set_xlabel("앱 용량 (MB)")
-ax4.set_ylabel("설치 수 (로그 변환)")
-ax4.legend()
-st.pyplot(fig4)
+# 구간별 평균 앱 용량 계산
+install_grouped = df_clean.groupby('Install_Bin')['Size_MB'].mean().reset_index()
+
+# 꺾은선 그래프
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.lineplot(data=install_grouped, x='Install_Bin', y='Size_MB', marker='o', sort=False, ax=ax)
+ax.set_title('설치 수 구간별 평균 앱 용량 (꺾은선 그래프)')
+ax.set_xlabel('설치 수 구간')
+ax.set_ylabel('평균 앱 용량 (MB)')
+ax.grid(True)
+st.pyplot(fig)
 
 # --- 5. 상위 15개 카테고리 평균 용량과 평균 설치 수 산점도 ---
 st.subheader("5️⃣ 상위 15개 카테고리 평균 앱 용량과 설치 수")
