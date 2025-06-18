@@ -72,7 +72,7 @@ sns.scatterplot(data=df, x='Rating', y='Log_Installs', alpha=0.2, color='gray', 
 ax1.plot(grouped['Bin_Center'], grouped['Log_Installs'], marker='o', color='crimson', label='구간별 평균')
 ax1.set_xlabel("앱 평점")
 ax1.set_ylabel("설치 수 (로그 변환)")
-ax1.set_title("평점에 따른 설치 수 (구간 평균선 포함)")
+ax1.set_title("평점에 따른 설치 수")
 ax1.legend()
 st.pyplot(fig1)
 
@@ -89,7 +89,7 @@ install_grouped = df_size.groupby('Install_Bin')['Size_MB'].mean().reset_index()
 
 fig2, ax2 = plt.subplots(figsize=(10, 6))
 sns.lineplot(data=install_grouped, x='Install_Bin', y='Size_MB', marker='o', sort=False, ax=ax2)
-ax2.set_title('설치 수 구간별 평균 앱 용량 (꺾은선 그래프)')
+ax2.set_title('설치 수 구간별 평균 앱 용량')
 ax2.set_xlabel('설치 수 구간')
 ax2.set_ylabel('평균 앱 용량 (MB)')
 ax2.grid(True)
