@@ -123,6 +123,7 @@ st.pyplot(fig4)
 st.subheader("상위 15개 카테고리 평균 앱 용량과 설치 수")
 st.markdown("카테고리별 평균 앱 용량(MB)과 평균 설치 수를 비교한 산점도입니다.")
 
+# 데이터 준비
 category_grouped = df.dropna(subset=['Category', 'Size_MB', 'Installs']).groupby('Category').agg({
     'Size_MB': 'mean',
     'Installs': 'mean'
@@ -130,8 +131,21 @@ category_grouped = df.dropna(subset=['Category', 'Size_MB', 'Installs']).groupby
 
 top15_cat = category_grouped.sort_values(by='Installs', ascending=False).head(15)
 
+# 고유 색상 팔레트 생성 (카테고리 수에 맞게)
+unique_categories = top15_cat['Category'].tolist()
+custom_palette = dict(zip(unique_categories, sns.color_palette("tab20", n_colors=len(unique_categories))))
+
+# 시각화
 fig5, ax5 = plt.subplots(figsize=(12, 6))
-sns.scatterplot(data=top15_cat, x='Size_MB', y='Installs', hue='Category', s=150, palette='tab10', ax=ax5)
+sns.scatterplot(
+    data=top15_cat,
+    x='Size_MB',
+    y='Installs',
+    hue='Category',
+    s=150,
+    palette=custom_palette,
+    ax=ax5
+)
 ax5.set_title("상위 15개 카테고리 평균 앱 용량과 설치 수")
 ax5.set_xlabel("평균 앱 용량 (MB)")
 ax5.set_ylabel("평균 설치 수")
