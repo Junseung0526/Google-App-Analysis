@@ -9,7 +9,8 @@ koreanize_matplotlib.koreanize()
 
 # --- 페이지 설정 ---
 st.set_page_config(page_title="Google Play Store 분석", layout="wide")
-st.title("📱 Google Play Store 앱 데이터 분석")
+st.title("Google Play Store 앱 데이터 분석")
+st.subheader("앱의 용량이 성공을 좌우하지 않으며, 사용자 목적에 부합하는 콘텐츠가 진정한 성공 요인")
 
 # --- 데이터 로드 및 전처리 ---
 @st.cache_data(show_spinner=True)
